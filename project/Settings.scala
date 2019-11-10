@@ -5,7 +5,7 @@ import com.typesafe.tools.mima.core.{DirectMissingMethodProblem, IncompatibleMet
 import com.typesafe.tools.mima.plugin.MimaKeys.{mimaBinaryIssueFilters, mimaPreviousArtifacts}
 import com.typesafe.sbt.osgi.SbtOsgi.autoImport._
 import com.typesafe.sbt.osgi.OsgiKeys
-import com.typesafe.sbt.pgp.PgpKeys
+import com.jsuereth.sbtpgp.PgpKeys
 
 object Settings {
 //  val slickVersion = 
