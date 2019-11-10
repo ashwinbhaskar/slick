@@ -27,7 +27,7 @@ object FMPP {
     val output = sourceManaged.value
     val fmppSrc = sourceDirectory.value / "scala"
     val inFiles = (fmppSrc ** "*.fm").get.toSet
-    val cachedFun = FileFunction.cached(s.cacheDirectory / "fmpp", inStyle = FilesInfo.exists){ (in: Set[File]) =>
+    val cachedFun = FileFunction.cached(s.cacheDirectory / "fmpp"){ (in: Set[File]) =>
       IO.delete((output ** "*.scala").get)
       val args = "--expert" :: "-q" :: "-S" :: fmppSrc.getPath :: "-O" :: output.getPath ::
       "--replace-extensions=fm, scala" :: "-M" :: "execute(**/*.fm), ignore(**/*)" :: Nil
