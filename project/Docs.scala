@@ -1,6 +1,7 @@
 import sbt._
 import Keys._
-import com.typesafe.sbt.sdlc.Plugin.{sdlcSettings, sdlcBase, sdlcCheckDir, sdlc}
+//import com.typesafe.sbt.sdlc.Plugin.{sdlcSettings, sdlcBase, sdlcCheckDir, sdlc}
+import com.typesafe.sbt.sdlc.SDLCPlugin.autoImport._
 import com.novocode.ornate.sbtplugin.OrnatePlugin.autoImport.{ornateBaseDir, ornateSourceDir, ornateTargetDir, ornateResourceDir, ornateSettings, ornate}
 
 object Docs {
