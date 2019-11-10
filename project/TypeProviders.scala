@@ -5,17 +5,19 @@ object TypeProviders {
 
   /** Slick type provider code gen  */
   val typeProviders = taskKey[Seq[File]]("Type provider code generation")
-  def typeProvidersConfig = config("codegen").hide
+  val TypeProvidersConfig = config("codegen").hide
+
   def codegenSettings = {
-    inConfig(typeProvidersConfig)(Defaults.configSettings) ++
+    val ConfigCompile = config("compile")
+    inConfig(TypeProvidersConfig)(Defaults.configSettings) ++
     Seq(
       sourceGenerators in Test += typeProviders.taskValue,
       typeProviders := typeProvidersTask.value,
-      ivyConfigurations += typeProvidersConfig.extend(Compile),
-      (compile in Test) := ((compile in Test) dependsOn (compile in typeProvidersConfig)).value,
-      unmanagedClasspath in typeProvidersConfig ++= (fullClasspath in config("compile")).value,
-      unmanagedClasspath in typeProvidersConfig ++= (fullClasspath in (LocalProject("codegen"), Test)).value,
-      unmanagedClasspath in Test ++= (fullClasspath in typeProvidersConfig).value,
+      ivyConfigurations += TypeProvidersConfig.extend(Compile),
+      (compile in Test) := ((compile in Test) dependsOn (compile in TypeProvidersConfig)).value,
+      unmanagedClasspath in TypeProvidersConfig ++= (fullClasspath in ConfigCompile).value,
+      unmanagedClasspath in TypeProvidersConfig ++= (fullClasspath in (LocalProject("codegen"), Test)).value,
+      unmanagedClasspath in Test ++= (fullClasspath in TypeProvidersConfig).value,
       mappings in (Test, packageSrc) ++= {
         val src = (sourceDirectory in Test).value / "codegen"
         val inFiles = src ** "*.scala"
@@ -25,7 +27,7 @@ object TypeProviders {
     )
   }
   def typeProvidersTask = Def.task {
-    val cp = (fullClasspath in typeProvidersConfig).value
+    val cp = (fullClasspath in TypeProvidersConfig).value
     val r = (runner in typeProviders).value
     val output = (sourceManaged in Test).value
     val s = streams.value
@@ -34,7 +36,7 @@ object TypeProviders {
     val src = srcDir / "codegen"
     val outDir = (output/"slick-codegen").getPath
     val inFiles = (src ** "*.scala").get.toSet ++ (slickSrc / "main/scala/slick/codegen" ** "*.scala").get.toSet ++ (slickSrc / "main/scala/slick/jdbc/meta" ** "*.scala").get.toSet
-    val cachedFun = FileFunction.cached(s.cacheDirectory / "type-providers", outStyle = FilesInfo.exists) { (in: Set[File]) =>
+    val cachedFun = FileFunction.cached(s.cacheDirectory / "type-providers") { (in: Set[File]) =>
       IO.delete((output ** "*.scala").get)
 
       val errors = {
