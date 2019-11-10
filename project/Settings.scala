@@ -246,7 +246,7 @@ object Settings {
     publishMavenStyle := true,
     publishArtifact in Test := false,
     pomIncludeRepository := { _ => false },
-    makePomConfiguration ~= { _.copy(configurations = Some(Seq(Compile, Runtime, Optional))) },
+    makePomConfiguration ~= { _.withConfigurations(configurations = Some(Seq(Compile, Runtime, Optional))) },
     homepage := Some(url("http://slick.typesafe.com")),
     startYear := Some(2008),
     licenses += ("Two-clause BSD-style license", url("http://github.com/slick/slick/blob/master/LICENSE.txt")),
