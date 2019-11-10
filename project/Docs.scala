@@ -1,6 +1,6 @@
 import sbt._
 import Keys._
-//import com.typesafe.sbt.sdlc.Plugin.{sdlcSettings, sdlcBase, sdlcCheckDir, sdlc}
+import com.typesafe.sbt.sdlc.SDLCPlugin._
 import com.typesafe.sbt.sdlc.SDLCPlugin.autoImport._
 import com.novocode.ornate.sbtplugin.OrnatePlugin.autoImport.{ornateBaseDir, ornateSourceDir, ornateTargetDir, ornateResourceDir, ornateSettings, ornate}
 
@@ -16,7 +16,7 @@ object Docs {
     ornateSourceDir := Some(docDir.value / "src"),
     ornateTargetDir := Some(docDir.value / "target"),
     // TODO: when moving to slick 1.x start using the `cleanFiles` setting instead of `cleanFIlesTask`
-    cleanFilesTask += docDir.value / "target", 
+    cleanFiles += docDir.value / "target", 
     ornateResourceDir := Some(docDir.value / "resources"),
     ornateSettings := Map(
       "version" -> version.value,
@@ -32,7 +32,7 @@ object Docs {
     doc := ornate.value
   )
 
-  def scaladocSettings = sdlcSettings ++ Seq(
+  def scaladocSettings = projectSettings ++ Seq(
     sdlcBase := apiName(projectID.value.name),
     sdlcCheckDir := docDir.value / "target",
     target in doc in Compile := docDir.value / "target" / sdlcBase.value,
