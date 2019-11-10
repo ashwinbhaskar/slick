@@ -24,6 +24,10 @@ object Settings {
 
   val MacroConfig = config("macros")
 
+  val TestConfig = config("test")
+
+  val CompileConfig = config("compile")
+
   def slickProjectSettings = (
     slickGeneralSettings ++
       compilerDependencySetting("macro") ++
@@ -41,7 +45,7 @@ object Settings {
           "-doc-source-url", s"https://github.com/slick/slick/blob/${Docs.versionTag(version.value)}/slick/src/main€{FILE_PATH}.scala",
           "-doc-root-content", "scaladoc-root.txt"
         ),
-        test := (), testOnly :=  (), // suppress test status output
+        test, testOnly, // suppress test status output
         mimaPreviousArtifacts := binaryCompatSlickVersion.value.toSet.map { v: String =>
           "com.typesafe.slick" % ("slick_" + scalaBinaryVersion.value) % v
         },
@@ -135,7 +139,7 @@ object Settings {
         scalacOptions in (Compile, doc) ++= Seq(
           "-doc-source-url", s"https://github.com/slick/slick/blob/${Docs.versionTag(version.value)}/slick-codegen/src/main€{FILE_PATH}.scala"
         ),
-        test := (), testOnly := (), // suppress test status output
+        test, testOnly, // suppress test status output
         commonTestResourcesSetting
       )
   )
@@ -151,7 +155,7 @@ object Settings {
         scalacOptions in (Compile, doc) ++= Seq(
           "-doc-source-url", s"https://github.com/slick/slick/blob/${Docs.versionTag(version.value)}/slick-hikaricp/src/main€{FILE_PATH}.scala"
         ),
-        test := (), testOnly := (), // suppress test status output
+        test, testOnly, // suppress test status output
         libraryDependencies += Dependencies.hikariCP,
         OsgiKeys.exportPackage := Seq("slick.jdbc.hikaricp"),
         OsgiKeys.importPackage := Seq(
@@ -174,7 +178,7 @@ object Settings {
         publishLocal := {},
         PgpKeys.publishSigned := {},
         PgpKeys.publishLocalSigned := {},
-        test := (), testOnly := () // suppress test status output
+        test, testOnly // suppress test status output
       )
   )
 
@@ -308,9 +312,9 @@ object Settings {
     scalaHome := Some(file(path)),
     autoScalaLibrary := false,
     unmanagedJars := scalaInstance.map( _.jars.classpath).value,
-    unmanagedJars in config("compile") := scalaInstance.map( _.jars.classpath).value,
-    unmanagedJars in config("test") := scalaInstance.map( _.jars.classpath).value,
-    unmanagedJars in config("macro") := scalaInstance.map( _.jars.classpath).value
+    unmanagedJars in CompileConfig := scalaInstance.map( _.jars.classpath).value,
+    unmanagedJars in TestConfig := scalaInstance.map( _.jars.classpath).value,
+    unmanagedJars in MacroConfig := scalaInstance.map( _.jars.classpath).value
   )
 
   def sampleProject(s: String): Project = Project(id = "sample-"+s, base = file("samples/"+s))
