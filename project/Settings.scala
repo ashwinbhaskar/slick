@@ -20,12 +20,14 @@ object Settings {
                                                             "The slick version this build should be compatible with, if any")
 
   /* Test Configuration for running tests on doc sources */
-  def DocTest = config("doctest") extend(Test)
+  val DocTest = config("doctest") extend(Test)
+
+  val MacroConfig = config("macros")
 
   def slickProjectSettings = (
     slickGeneralSettings ++
       compilerDependencySetting("macro") ++
-      inConfig(config("macro"))(Defaults.configSettings) ++
+      inConfig(MacroConfig)(Defaults.configSettings) ++
       FMPP.preprocessorSettings ++
       mimaDefaultSettings ++
       extTarget("slick") ++
@@ -67,11 +69,11 @@ object Settings {
           ProblemFilters.exclude[DirectMissingMethodProblem]("slick.util.AsyncExecutor.apply$default$6"),
           ProblemFilters.exclude[DirectMissingMethodProblem]("slick.util.AsyncExecutor.apply$default$7")
         ),
-        ivyConfigurations += config("macro").hide.extend(Compile),
-        unmanagedClasspath in Compile ++= (products in config("macro")).value,
+        ivyConfigurations += MacroConfig.hide.extend(Compile),
+        unmanagedClasspath in Compile ++= (products in MacroConfig).value,
         libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value % "provided",
-        mappings in (Compile, packageSrc) ++= (mappings in (config("macro"), packageSrc)).value,
-        mappings in (Compile, packageBin) ++= (mappings in (config("macro"), packageBin)).value,
+        mappings in (Compile, packageSrc) ++= (mappings in (MacroConfig, packageSrc)).value,
+        mappings in (Compile, packageBin) ++= (mappings in (MacroConfig, packageBin)).value,
         OsgiKeys.exportPackage := Seq("slick", "slick.*", "scala.slick", "scala.slick.*"),
         OsgiKeys.importPackage := Seq(Osgi.osgiImport("scala*", scalaVersion.value), "*"),
         OsgiKeys.privatePackage := Nil
