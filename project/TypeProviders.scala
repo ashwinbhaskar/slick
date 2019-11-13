@@ -1,6 +1,10 @@
 import sbt._
 import Keys._
 
+import scala.util.Try
+import scala.util.Failure
+import scala.util.Success
+
 object TypeProviders {
 
   /** Slick type provider code gen  */
@@ -39,13 +43,18 @@ object TypeProviders {
     val cachedFun = FileFunction.cached(s.cacheDirectory / "type-providers") { (in: Set[File]) =>
       IO.delete((output ** "*.scala").get)
 
-      val errors = {
+
+
+      val possibleErrors: Try[Unit] = {
         r.run("slick.test.codegen.GenerateMainSources", cp.files, Array(outDir), s.log)
-      } orElse {
-        r.run("slick.test.codegen.GenerateRoundtripSources", cp.files, Array(outDir), s.log)
+      } flatMap  {
+        _ => r.run("slick.test.codegen.GenerateRoundtripSources", cp.files, Array(outDir), s.log)
       }
 
-      errors foreach sys.error
+      possibleErrors match {
+        case Success(_) => //Do nothing
+        case Failure(t) => sys.error(t.getMessage)
+      }
 
       (output ** "*.scala").get.toSet
     }

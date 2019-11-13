@@ -1,5 +1,8 @@
 import sbt._
 import sbt.Keys._
+import scala.util.Try
+import scala.util.Failure
+import scala.util.Success
 
 object FMPP {
   def preprocessorSettings = inConfig(Compile)(Seq(sourceGenerators += fmpp.taskValue, fmpp := fmppTask.value)) ++ Seq(
@@ -19,6 +22,7 @@ object FMPP {
       (inFiles pair (Path.relativeTo(fmppSrc) | Path.flat)) // Add *.fm files to sources JAR
     }
   )
+
   /* FMPP Task */
   val fmpp = TaskKey[Seq[File]]("fmpp")
   val FmppConfig = config("fmpp").hide
@@ -32,9 +36,12 @@ object FMPP {
       val args = "--expert" :: "-q" :: "-S" :: fmppSrc.getPath :: "-O" :: output.getPath ::
       "--replace-extensions=fm, scala" :: "-M" :: "execute(**/*.fm), ignore(**/*)" :: Nil
 
-      val errors = (runner in fmpp).value.run("fmpp.tools.CommandLine", (fullClasspath in FmppConfig).value.files, args, s.log)
+      val possibleError: Try[Unit] = (runner in fmpp).value.run("fmpp.tools.CommandLine", (fullClasspath in FmppConfig).value.files, args, s.log)
 
-      errors foreach sys.error
+      possibleError match {
+        case Success(_) => //Do nothing
+        case Failure(t) => sys.error(t.getMessage)
+      }
 
       (output ** "*.scala").get.toSet
     }
