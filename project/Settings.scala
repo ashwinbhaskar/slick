@@ -6,6 +6,7 @@ import com.typesafe.tools.mima.plugin.MimaKeys.{mimaBinaryIssueFilters, mimaPrev
 import com.typesafe.sbt.osgi.SbtOsgi.autoImport._
 import com.typesafe.sbt.osgi.OsgiKeys
 import com.jsuereth.sbtpgp.PgpKeys
+import sbt.Defaults.RichFiles
 
 object Settings {
 //  val slickVersion = 
@@ -305,16 +306,17 @@ object Settings {
     crossScalaVersions := Dependencies.scalaVersions
   )
 
+
   def localScalaSettings(path: String): Seq[Setting[_]] = Seq(
     scalaVersion := "2.10.0-unknown",
     scalaBinaryVersion := "2.10.0-unknown",
     crossVersion := CrossVersion.Disabled,
     scalaHome := Some(file(path)),
     autoScalaLibrary := false,
-    unmanagedJars := scalaInstance.map( _.jars.classpath).value,
-    unmanagedJars in CompileConfig := scalaInstance.map( _.jars.classpath).value,
-    unmanagedJars in TestConfig := scalaInstance.map( _.jars.classpath).value,
-    unmanagedJars in MacroConfig := scalaInstance.map( _.jars.classpath).value
+    unmanagedJars := scalaInstance.map( _.allJars.toSeq.classpath).value,
+    unmanagedJars in CompileConfig := scalaInstance.map( _.allJars.toSeq.classpath).value,
+    unmanagedJars in TestConfig := scalaInstance.map( _.allJars.toSeq.classpath).value,
+    unmanagedJars in MacroConfig := scalaInstance.map( _.allJars.toSeq.classpath).value
   )
 
   def sampleProject(s: String): Project = Project(id = "sample-"+s, base = file("samples/"+s))
